@@ -1,0 +1,34 @@
+LIBCINI_1 {
+global:
+        c_ini_entry_ref;
+        c_ini_entry_unref;
+        c_ini_entry_next;
+        c_ini_entry_previous;
+        c_ini_entry_get_key;
+        c_ini_entry_get_value;
+
+        c_ini_group_ref;
+        c_ini_group_unref;
+        c_ini_group_next;
+        c_ini_group_previous;
+        c_ini_group_get_label;
+        c_ini_group_iterate;
+        c_ini_group_find;
+
+        c_ini_domain_ref;
+        c_ini_domain_unref;
+        c_ini_domain_get_null_group;
+        c_ini_domain_iterate;
+        c_ini_domain_find;
+
+        c_ini_reader_new;
+        c_ini_reader_free;
+        c_ini_reader_set_mode;
+        c_ini_reader_get_mode;
+        c_ini_reader_feed;
+        c_ini_reader_seal;
+
+        c_ini_reader_parse;
+local:
+       *;
+};
