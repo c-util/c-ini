@@ -162,7 +162,6 @@ static void test_reader_normal_whitespace(void) {
                         .value = "value",
                 },
         };
-        _cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
         size_t i;
         int r;
 
@@ -258,13 +257,14 @@ static void test_reader_extended_whitespace(void) {
                         .value = "value",
                 },
         };
-        _cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
         size_t i;
         int r;
 
         assert(sizeof(input) / sizeof(*input) == sizeof(output) / sizeof(*output));
 
         for (i = 0; i < sizeof(input) / sizeof(*input); ++i) {
+                _cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
+
                 r = c_ini_reader_parse(&domain,
                                        C_INI_MODE_EXTENDED_WHITESPACE,
                                        (void*)input[i],
