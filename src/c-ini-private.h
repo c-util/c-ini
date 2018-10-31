@@ -142,7 +142,6 @@ int c_ini_domain_new(CIniDomain **domainp);
 
 int c_ini_reader_init(CIniReader *reader);
 void c_ini_reader_deinit(CIniReader *reader);
-int c_ini_reader_new(CIniReader **readerp);
 
 /* inline helpers */
 
