@@ -65,3 +65,6 @@ test('API Symbol Visibility', test_api)
 
 test_basic = executable('test-basic', ['test-basic.c'], dependencies: libcini_dep)
 test('Basic API Behavior', test_basic)
+
+test_reader = executable('test-reader', ['test-reader.c'], dependencies: libcini_dep)
+test('Parser Capabilities', test_reader)
