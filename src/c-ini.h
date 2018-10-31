@@ -123,13 +123,6 @@ unsigned int c_ini_reader_get_mode(CIniReader *reader);
 int c_ini_reader_feed(CIniReader *reader, const uint8_t *data, size_t n_data);
 int c_ini_reader_seal(CIniReader *reader, CIniDomain **domainp);
 
-/* helpers */
-
-int c_ini_reader_parse(CIniDomain **domainp,
-                       unsigned int mode,
-                       const uint8_t *data,
-                       size_t n_data);
-
 /* inline helpers */
 
 static inline void c_ini_entry_unrefp(CIniEntry **entry) {

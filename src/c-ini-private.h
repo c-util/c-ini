@@ -143,6 +143,11 @@ int c_ini_domain_new(CIniDomain **domainp);
 int c_ini_reader_init(CIniReader *reader);
 void c_ini_reader_deinit(CIniReader *reader);
 
+int c_ini_reader_parse(CIniDomain **domainp,
+                       unsigned int mode,
+                       const uint8_t *data,
+                       size_t n_data);
+
 /* inline helpers */
 
 static inline void c_ini_freep(void *p) {

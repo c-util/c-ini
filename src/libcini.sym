@@ -27,8 +27,6 @@ global:
         c_ini_reader_get_mode;
         c_ini_reader_feed;
         c_ini_reader_seal;
-
-        c_ini_reader_parse;
 local:
        *;
 };

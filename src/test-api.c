@@ -74,13 +74,6 @@ static void test_api(void) {
         assert(c_ini_entry_get_value(entry, NULL));
 
         entry = c_ini_entry_unref(entry);
-
-        /* helpers */
-
-        r = c_ini_reader_parse(&domain, 0, NULL, 0);
-        assert(!r);
-
-        domain = c_ini_domain_unref(domain);
 }
 
 int main(int argc, char **argv) {
