@@ -251,7 +251,7 @@ static int c_ini_reader_parse_line(CIniReader *reader, CIniRaw *raw) {
                                         --n_tmp;
                         }
 
-                        if (end - tmp + 1 == n_tmp)
+                        if (end - tmp + 1 == (ssize_t)n_tmp)
                                 return c_ini_reader_parse_group(reader,
                                                                 raw,
                                                                 tmp - raw->data,
