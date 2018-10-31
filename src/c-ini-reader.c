@@ -81,7 +81,7 @@ static int c_ini_reader_parse_entry(CIniReader *reader,
         const uint8_t *key = raw->data + i_key;
         const uint8_t *value = raw->data + i_assignment + 1;
         size_t n_key = i_assignment - i_key;
-        size_t n_value = n - i_assignment - 1;
+        size_t n_value = n - (i_assignment - i_key + 1);
         CIniGroup *group;
         CIniEntry *dup;
         int r;
