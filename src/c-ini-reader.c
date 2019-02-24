@@ -7,6 +7,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include "c-ini.h"
 #include "c-ini-private.h"
 
