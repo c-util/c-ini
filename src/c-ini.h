@@ -66,6 +66,7 @@ extern "C" {
 
 #include <inttypes.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
 typedef struct CIniDomain CIniDomain;
 typedef struct CIniEntry CIniEntry;
