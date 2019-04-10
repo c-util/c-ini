@@ -7,6 +7,7 @@ libcini_symfile = join_paths(meson.current_source_dir(), 'libcini.sym')
 libcini_deps = [
         dep_clist,
         dep_crbtree,
+        dep_cstdaux,
         dep_cutf8,
 ]
 

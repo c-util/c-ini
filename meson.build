@@ -14,10 +14,12 @@ mod_pkgconfig = import('pkgconfig')
 
 sub_clist = subproject('c-list')
 sub_crbtree = subproject('c-rbtree')
+sub_cstdaux = subproject('c-stdaux')
 sub_cutf8 = subproject('c-utf8')
 
 dep_clist = sub_clist.get_variable('libclist_dep')
 dep_crbtree = sub_crbtree.get_variable('libcrbtree_dep')
+dep_cstdaux = sub_cstdaux.get_variable('libcstdaux_dep')
 dep_cutf8 = sub_cutf8.get_variable('libcutf8_dep')
 
 subdir('src')
