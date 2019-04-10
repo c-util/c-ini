@@ -4,7 +4,9 @@
  * includes testing for API guarantees, as well as functional correctness.
  */
 
+#undef NDEBUG
 #include <assert.h>
+#include <c-stdaux.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,8 +14,8 @@
 #include "c-ini-private.h"
 
 static void test_reader_assert_empty(CIniDomain *domain) {
-        assert(!c_ini_group_iterate(c_ini_domain_get_null_group(domain)));
-        assert(!c_ini_domain_iterate(domain));
+        c_assert(!c_ini_group_iterate(c_ini_domain_get_null_group(domain)));
+        c_assert(!c_ini_domain_iterate(domain));
 }
 
 static void test_reader_assert_null_singleton(CIniDomain *domain,
@@ -22,15 +24,15 @@ static void test_reader_assert_null_singleton(CIniDomain *domain,
         CIniGroup *group;
         CIniEntry *entry;
 
-        assert(!c_ini_domain_iterate(domain));
+        c_assert(!c_ini_domain_iterate(domain));
 
         group = c_ini_domain_get_null_group(domain);
         entry = c_ini_group_iterate(group);
-        assert(entry);
-        assert(!c_ini_entry_next(entry));
-        assert(!c_ini_entry_previous(entry));
-        assert(!strcmp(key, c_ini_entry_get_key(entry, NULL)));
-        assert(!strcmp(value, c_ini_entry_get_value(entry, NULL)));
+        c_assert(entry);
+        c_assert(!c_ini_entry_next(entry));
+        c_assert(!c_ini_entry_previous(entry));
+        c_assert(!strcmp(key, c_ini_entry_get_key(entry, NULL)));
+        c_assert(!strcmp(value, c_ini_entry_get_value(entry, NULL)));
 }
 
 static void test_reader_assert_singleton(CIniDomain *domain,
@@ -40,20 +42,20 @@ static void test_reader_assert_singleton(CIniDomain *domain,
         CIniGroup *group;
         CIniEntry *entry;
 
-        assert(!c_ini_group_iterate(c_ini_domain_get_null_group(domain)));
+        c_assert(!c_ini_group_iterate(c_ini_domain_get_null_group(domain)));
 
         group = c_ini_domain_iterate(domain);
-        assert(group);
-        assert(!c_ini_group_next(group));
-        assert(!c_ini_group_previous(group));
-        assert(!strcmp(label, c_ini_group_get_label(group, NULL)));
+        c_assert(group);
+        c_assert(!c_ini_group_next(group));
+        c_assert(!c_ini_group_previous(group));
+        c_assert(!strcmp(label, c_ini_group_get_label(group, NULL)));
 
         entry = c_ini_group_iterate(group);
-        assert(entry);
-        assert(!c_ini_entry_next(entry));
-        assert(!c_ini_entry_previous(entry));
-        assert(!strcmp(key, c_ini_entry_get_key(entry, NULL)));
-        assert(!strcmp(value, c_ini_entry_get_value(entry, NULL)));
+        c_assert(entry);
+        c_assert(!c_ini_entry_next(entry));
+        c_assert(!c_ini_entry_previous(entry));
+        c_assert(!strcmp(key, c_ini_entry_get_key(entry, NULL)));
+        c_assert(!strcmp(value, c_ini_entry_get_value(entry, NULL)));
 }
 
 static void test_reader_normal_whitespace(void) {
@@ -165,13 +167,13 @@ static void test_reader_normal_whitespace(void) {
         size_t i;
         int r;
 
-        assert(sizeof(input) / sizeof(*input) == sizeof(output) / sizeof(*output));
+        c_assert(sizeof(input) / sizeof(*input) == sizeof(output) / sizeof(*output));
 
         for (i = 0; i < sizeof(input) / sizeof(*input); ++i) {
-                _cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
+                _c_cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
 
                 r = c_ini_reader_parse(&domain, 0, (void*)input[i], strlen(input[i]));
-                assert(!r);
+                c_assert(!r);
 
                 if (output[i].label)
                         test_reader_assert_singleton(domain,
@@ -260,16 +262,16 @@ static void test_reader_extended_whitespace(void) {
         size_t i;
         int r;
 
-        assert(sizeof(input) / sizeof(*input) == sizeof(output) / sizeof(*output));
+        c_assert(sizeof(input) / sizeof(*input) == sizeof(output) / sizeof(*output));
 
         for (i = 0; i < sizeof(input) / sizeof(*input); ++i) {
-                _cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
+                _c_cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
 
                 r = c_ini_reader_parse(&domain,
                                        C_INI_MODE_EXTENDED_WHITESPACE,
                                        (void*)input[i],
                                        strlen(input[i]));
-                assert(!r);
+                c_assert(!r);
 
                 if (output[i].label)
                         test_reader_assert_singleton(domain,

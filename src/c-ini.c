@@ -4,6 +4,7 @@
 
 #include <c-list.h>
 #include <c-rbtree.h>
+#include <c-stdaux.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <stdlib.h>
@@ -28,8 +29,8 @@ int c_ini_entry_new(CIniEntry **entryp,
                     size_t n_key,
                     const uint8_t *value,
                     size_t n_value) {
-        _cleanup_(c_ini_entry_unrefp) CIniEntry *entry = NULL;
-        _cleanup_(c_ini_freep) uint8_t *dup_key = NULL, *dup_value = NULL;
+        _c_cleanup_(c_ini_entry_unrefp) CIniEntry *entry = NULL;
+        _c_cleanup_(c_ini_freep) uint8_t *dup_key = NULL, *dup_value = NULL;
 
         dup_key = calloc(1, n_key + 1);
         if (!dup_key)
@@ -64,9 +65,9 @@ static CIniEntry *c_ini_entry_free_internal(CIniEntry *entry) {
         if (!entry)
                 return NULL;
 
-        assert(!entry->group);
-        assert(!c_list_is_linked(&entry->link_group));
-        assert(!c_rbnode_is_linked(&entry->rb_group));
+        c_assert(!entry->group);
+        c_assert(!c_list_is_linked(&entry->link_group));
+        c_assert(!c_rbnode_is_linked(&entry->rb_group));
 
         free(entry->value);
         free(entry->key);
@@ -75,13 +76,13 @@ static CIniEntry *c_ini_entry_free_internal(CIniEntry *entry) {
         return NULL;
 }
 
-_public_ CIniEntry *c_ini_entry_ref(CIniEntry *entry) {
+_c_public_ CIniEntry *c_ini_entry_ref(CIniEntry *entry) {
         if (entry)
                 ++entry->n_refs;
         return entry;
 }
 
-_public_ CIniEntry *c_ini_entry_unref(CIniEntry *entry) {
+_c_public_ CIniEntry *c_ini_entry_unref(CIniEntry *entry) {
         if (entry && !--entry->n_refs)
                 c_ini_entry_free_internal(entry);
         return NULL;
@@ -92,7 +93,7 @@ void c_ini_entry_link(CIniEntry *entry, CIniGroup *group) {
         CRBNode **slot, *parent;
         int r;
 
-        assert(!entry->group);
+        c_assert(!entry->group);
 
         slot = &group->map_entries.root;
         parent = NULL;
@@ -121,25 +122,25 @@ void c_ini_entry_unlink(CIniEntry *entry) {
         }
 }
 
-_public_ CIniEntry *c_ini_entry_next(CIniEntry *entry) {
+_c_public_ CIniEntry *c_ini_entry_next(CIniEntry *entry) {
         if (!entry->group || entry->link_group.next == &entry->group->list_entries)
                 return NULL;
         return c_list_entry(entry->link_group.next, CIniEntry, link_group);
 }
 
-_public_ CIniEntry *c_ini_entry_previous(CIniEntry *entry) {
+_c_public_ CIniEntry *c_ini_entry_previous(CIniEntry *entry) {
         if (!entry->group || entry->link_group.prev == &entry->group->list_entries)
                 return NULL;
         return c_list_entry(entry->link_group.prev, CIniEntry, link_group);
 }
 
-_public_ const char *c_ini_entry_get_key(CIniEntry *entry, size_t *n_keyp) {
+_c_public_ const char *c_ini_entry_get_key(CIniEntry *entry, size_t *n_keyp) {
         if (n_keyp)
                 *n_keyp = entry->n_key;
         return (const char *)entry->key;
 }
 
-_public_ const char *c_ini_entry_get_value(CIniEntry *entry, size_t *n_valuep) {
+_c_public_ const char *c_ini_entry_get_value(CIniEntry *entry, size_t *n_valuep) {
         if (n_valuep)
                 *n_valuep = entry->n_value;
         return (const char *)entry->value;
@@ -158,8 +159,8 @@ static int c_ini_group_compare(CRBTree *t, void *k, CRBNode *rb) {
 }
 
 int c_ini_group_new(CIniGroup **groupp, const uint8_t *label, size_t n_label) {
-        _cleanup_(c_ini_group_unrefp) CIniGroup *group = NULL;
-        _cleanup_(c_ini_freep) uint8_t *dup = NULL;
+        _c_cleanup_(c_ini_group_unrefp) CIniGroup *group = NULL;
+        _c_cleanup_(c_ini_freep) uint8_t *dup = NULL;
 
         dup = calloc(1, n_label + 1);
         if (!dup)
@@ -190,9 +191,9 @@ static CIniGroup *c_ini_group_free_internal(CIniGroup *group) {
         c_list_for_each_entry_safe(entry, t_entry, &group->list_entries, link_group)
                 c_ini_entry_unlink(entry);
 
-        assert(!c_list_is_linked(&group->link_domain));
-        assert(!c_rbnode_is_linked(&group->rb_domain));
-        assert(!group->domain);
+        c_assert(!c_list_is_linked(&group->link_domain));
+        c_assert(!c_rbnode_is_linked(&group->rb_domain));
+        c_assert(!group->domain);
 
         free(group->label);
         free(group);
@@ -200,13 +201,13 @@ static CIniGroup *c_ini_group_free_internal(CIniGroup *group) {
         return NULL;
 }
 
-_public_ CIniGroup *c_ini_group_ref(CIniGroup *group) {
+_c_public_ CIniGroup *c_ini_group_ref(CIniGroup *group) {
         if (group)
                 ++group->n_refs;
         return group;
 }
 
-_public_ CIniGroup *c_ini_group_unref(CIniGroup *group) {
+_c_public_ CIniGroup *c_ini_group_unref(CIniGroup *group) {
         if (group && !--group->n_refs)
                 c_ini_group_free_internal(group);
         return NULL;
@@ -217,7 +218,7 @@ void c_ini_group_link(CIniGroup *group, CIniDomain *domain) {
         CRBNode **slot, *parent;
         int r;
 
-        assert(!group->domain);
+        c_assert(!group->domain);
 
         slot = &domain->map_groups.root;
         parent = NULL;
@@ -246,29 +247,29 @@ void c_ini_group_unlink(CIniGroup *group) {
         }
 }
 
-_public_ CIniGroup *c_ini_group_next(CIniGroup *group) {
+_c_public_ CIniGroup *c_ini_group_next(CIniGroup *group) {
         if (!group->domain || group->link_domain.next == &group->domain->list_groups)
                 return NULL;
         return c_list_entry(group->link_domain.next, CIniGroup, link_domain);
 }
 
-_public_ CIniGroup *c_ini_group_previous(CIniGroup *group) {
+_c_public_ CIniGroup *c_ini_group_previous(CIniGroup *group) {
         if (!group->domain || group->link_domain.prev == &group->domain->list_groups)
                 return NULL;
         return c_list_entry(group->link_domain.prev, CIniGroup, link_domain);
 }
 
-_public_ const char *c_ini_group_get_label(CIniGroup *group, size_t *n_labelp) {
+_c_public_ const char *c_ini_group_get_label(CIniGroup *group, size_t *n_labelp) {
         if (n_labelp)
                 *n_labelp = group->n_label;
         return (const char *)group->label;
 }
 
-_public_ CIniEntry *c_ini_group_iterate(CIniGroup *group) {
+_c_public_ CIniEntry *c_ini_group_iterate(CIniGroup *group) {
         return c_list_first_entry(&group->list_entries, CIniEntry, link_group);
 }
 
-_public_ CIniEntry *c_ini_group_find(CIniGroup *group, const char *label, ssize_t n_label) {
+_c_public_ CIniEntry *c_ini_group_find(CIniGroup *group, const char *label, ssize_t n_label) {
         CIniBytes bytes;
         CRBNode *iter;
         int r;
@@ -305,7 +306,7 @@ _public_ CIniEntry *c_ini_group_find(CIniGroup *group, const char *label, ssize_
 }
 
 int c_ini_raw_new(CIniRaw **rawp, const uint8_t *data, size_t n_data) {
-        _cleanup_(c_ini_raw_unrefp) CIniRaw *raw = NULL;
+        _c_cleanup_(c_ini_raw_unrefp) CIniRaw *raw = NULL;
 
         raw = calloc(1, sizeof(*raw) + n_data + 1);
         if (!raw)
@@ -324,7 +325,7 @@ static CIniRaw *c_ini_raw_free_internal(CIniRaw *raw) {
         if (!raw)
                 return NULL;
 
-        assert(!c_list_is_linked(&raw->link_domain));
+        c_assert(!c_list_is_linked(&raw->link_domain));
 
         free(raw);
 
@@ -344,7 +345,7 @@ CIniRaw *c_ini_raw_unref(CIniRaw *raw) {
 }
 
 void c_ini_raw_link(CIniRaw *raw, CIniDomain *domain) {
-        assert(!raw->domain);
+        c_assert(!raw->domain);
 
         c_ini_raw_ref(raw);
         raw->domain = domain;
@@ -360,7 +361,7 @@ void c_ini_raw_unlink(CIniRaw *raw) {
 }
 
 int c_ini_domain_new(CIniDomain **domainp) {
-        _cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
+        _c_cleanup_(c_ini_domain_unrefp) CIniDomain *domain = NULL;
         int r;
 
         domain = calloc(1, sizeof(*domain));
@@ -391,9 +392,9 @@ static CIniDomain *c_ini_domain_free_internal(CIniDomain *domain) {
         c_list_for_each_entry_safe(group, t_group, &domain->list_groups, link_domain)
                 c_ini_group_unlink(group);
 
-        assert(c_list_is_empty(&domain->list_raws));
-        assert(c_list_is_empty(&domain->list_groups));
-        assert(c_rbtree_is_empty(&domain->map_groups));
+        c_assert(c_list_is_empty(&domain->list_raws));
+        c_assert(c_list_is_empty(&domain->list_groups));
+        c_assert(c_rbtree_is_empty(&domain->map_groups));
 
         c_ini_group_unref(domain->null_group);
         free(domain);
@@ -401,27 +402,27 @@ static CIniDomain *c_ini_domain_free_internal(CIniDomain *domain) {
         return NULL;
 }
 
-_public_ CIniDomain *c_ini_domain_ref(CIniDomain *domain) {
+_c_public_ CIniDomain *c_ini_domain_ref(CIniDomain *domain) {
         if (domain)
                 ++domain->n_refs;
         return domain;
 }
 
-_public_ CIniDomain *c_ini_domain_unref(CIniDomain *domain) {
+_c_public_ CIniDomain *c_ini_domain_unref(CIniDomain *domain) {
         if (domain && !--domain->n_refs)
                 c_ini_domain_free_internal(domain);
         return NULL;
 }
 
-_public_ CIniGroup *c_ini_domain_get_null_group(CIniDomain *domain) {
+_c_public_ CIniGroup *c_ini_domain_get_null_group(CIniDomain *domain) {
         return domain->null_group;
 }
 
-_public_ CIniGroup *c_ini_domain_iterate(CIniDomain *domain) {
+_c_public_ CIniGroup *c_ini_domain_iterate(CIniDomain *domain) {
         return c_list_first_entry(&domain->list_groups, CIniGroup, link_domain);
 }
 
-_public_ CIniGroup *c_ini_domain_find(CIniDomain *domain, const char *label, ssize_t n_label) {
+_c_public_ CIniGroup *c_ini_domain_find(CIniDomain *domain, const char *label, ssize_t n_label) {
         CIniBytes bytes;
         CRBNode *iter;
         int r;

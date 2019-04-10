@@ -2,6 +2,7 @@
  * Ini-File Reader
  */
 
+#include <c-stdaux.h>
 #include <c-utf8.h>
 #include <errno.h>
 #include <inttypes.h>
@@ -23,8 +24,8 @@ void c_ini_reader_deinit(CIniReader *reader) {
         *reader = (CIniReader)C_INI_READER_NULL(*reader);
 }
 
-_public_ int c_ini_reader_new(CIniReader **readerp) {
-        _cleanup_(c_ini_reader_freep) CIniReader *reader = NULL;
+_c_public_ int c_ini_reader_new(CIniReader **readerp) {
+        _c_cleanup_(c_ini_reader_freep) CIniReader *reader = NULL;
         int r;
 
         reader = calloc(1, sizeof(*reader));
@@ -42,28 +43,28 @@ _public_ int c_ini_reader_new(CIniReader **readerp) {
         return 0;
 }
 
-_public_ void c_ini_reader_set_mode(CIniReader *reader, unsigned int mode) {
+_c_public_ void c_ini_reader_set_mode(CIniReader *reader, unsigned int mode) {
         /* make sure no invalid modes are passed */
-        assert(!(mode & ~(C_INI_MODE_EXTENDED_WHITESPACE |
-                          C_INI_MODE_KEEP_DUPLICATE_GROUPS |
-                          C_INI_MODE_MERGE_GROUPS |
-                          C_INI_MODE_KEEP_DUPLICATE_ENTRIES |
-                          C_INI_MODE_OVERRIDE_ENTRIES)));
+        c_assert(!(mode & ~(C_INI_MODE_EXTENDED_WHITESPACE |
+                            C_INI_MODE_KEEP_DUPLICATE_GROUPS |
+                            C_INI_MODE_MERGE_GROUPS |
+                            C_INI_MODE_KEEP_DUPLICATE_ENTRIES |
+                            C_INI_MODE_OVERRIDE_ENTRIES)));
         /* KEEP_DUPLICATE_GROUPS cannot be combined with MERGE_GROUPS */
-        assert(!(mode & C_INI_MODE_KEEP_DUPLICATE_GROUPS) ||
-               !(mode & C_INI_MODE_MERGE_GROUPS));
+        c_assert(!(mode & C_INI_MODE_KEEP_DUPLICATE_GROUPS) ||
+                 !(mode & C_INI_MODE_MERGE_GROUPS));
         /* KEEP_DUPLICATE_ENTRIES cannot be combined with OVERRIDE_ENTRIES */
-        assert(!(mode & C_INI_MODE_KEEP_DUPLICATE_ENTRIES) ||
+        c_assert(!(mode & C_INI_MODE_KEEP_DUPLICATE_ENTRIES) ||
                !(mode & C_INI_MODE_OVERRIDE_ENTRIES));
 
         reader->mode = mode;
 }
 
-_public_ unsigned int c_ini_reader_get_mode(CIniReader *reader) {
+_c_public_ unsigned int c_ini_reader_get_mode(CIniReader *reader) {
         return reader->mode;
 }
 
-_public_ CIniReader *c_ini_reader_free(CIniReader *reader) {
+_c_public_ CIniReader *c_ini_reader_free(CIniReader *reader) {
         if (!reader)
                 return NULL;
 
@@ -78,7 +79,7 @@ static int c_ini_reader_parse_entry(CIniReader *reader,
                                     size_t i_key,
                                     size_t i_assignment,
                                     size_t n) {
-        _cleanup_(c_ini_entry_unrefp) CIniEntry *entry = NULL;
+        _c_cleanup_(c_ini_entry_unrefp) CIniEntry *entry = NULL;
         const uint8_t *key = raw->data + i_key;
         const uint8_t *value = raw->data + i_assignment + 1;
         size_t n_key = i_assignment - i_key;
@@ -152,7 +153,7 @@ static int c_ini_reader_parse_group(CIniReader *reader,
                                     CIniRaw *raw,
                                     size_t i_label,
                                     size_t n_label) {
-        _cleanup_(c_ini_group_unrefp) CIniGroup *group = NULL;
+        _c_cleanup_(c_ini_group_unrefp) CIniGroup *group = NULL;
         const uint8_t *label = raw->data + i_label;
         CIniGroup *dup;
         int r;
@@ -281,7 +282,7 @@ static int c_ini_reader_parse_line(CIniReader *reader, CIniRaw *raw) {
 }
 
 static int c_ini_reader_commit(CIniReader *reader) {
-        _cleanup_(c_ini_raw_unrefp) CIniRaw *raw = NULL;
+        _c_cleanup_(c_ini_raw_unrefp) CIniRaw *raw = NULL;
         int r;
 
         /*
@@ -331,7 +332,7 @@ static int c_ini_reader_append(CIniReader *reader, const uint8_t *data, size_t n
         return 0;
 }
 
-_public_ int c_ini_reader_feed(CIniReader *reader, const uint8_t *data, size_t n_data) {
+_c_public_ int c_ini_reader_feed(CIniReader *reader, const uint8_t *data, size_t n_data) {
         const uint8_t *end;
         size_t n;
         int r;
@@ -379,7 +380,7 @@ _public_ int c_ini_reader_feed(CIniReader *reader, const uint8_t *data, size_t n
         return c_ini_reader_append(reader, data, n_data);
 }
 
-_public_ int c_ini_reader_seal(CIniReader *reader, CIniDomain **domainp) {
+_c_public_ int c_ini_reader_seal(CIniReader *reader, CIniDomain **domainp) {
         int r;
 
         if (!reader->domain) {
@@ -418,11 +419,11 @@ _public_ int c_ini_reader_seal(CIniReader *reader, CIniDomain **domainp) {
         return 0;
 }
 
-_public_ int c_ini_reader_parse(CIniDomain **domainp,
-                                unsigned int mode,
-                                const uint8_t *data,
-                                size_t n_data) {
-        _cleanup_(c_ini_reader_deinit) CIniReader reader = C_INI_READER_NULL(reader);
+_c_public_ int c_ini_reader_parse(CIniDomain **domainp,
+                                  unsigned int mode,
+                                  const uint8_t *data,
+                                  size_t n_data) {
+        _c_cleanup_(c_ini_reader_deinit) CIniReader reader = C_INI_READER_NULL(reader);
         int r;
 
         r = c_ini_reader_init(&reader);

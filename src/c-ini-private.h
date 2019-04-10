@@ -2,13 +2,11 @@
 
 #include <c-list.h>
 #include <c-rbtree.h>
+#include <c-stdaux.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include "c-ini.h"
-
-#define _public_ __attribute__((__visibility__("default")))
-#define _cleanup_(_x) __attribute__((__cleanup__(_x)))
 
 typedef struct CIniBytes CIniBytes;
 typedef struct CIniRaw CIniRaw;
