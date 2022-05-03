@@ -11,8 +11,8 @@ libcini_deps = [
         dep_cutf8,
 ]
 
-libcini_private = static_library(
-        'cini-private',
+libcini_both = both_libraries(
+        'cini-'+major,
         [
                 'c-ini.c',
                 'c-ini-reader.c',
@@ -22,26 +22,19 @@ libcini_private = static_library(
                 '-fno-common',
         ],
         dependencies: libcini_deps,
-        pic: true,
-)
-
-libcini_shared = shared_library(
-        'cini',
-        objects: libcini_private.extract_all_objects(),
-        dependencies: libcini_deps,
         install: not meson.is_subproject(),
-        soversion: 0,
-        link_depends: libcini_symfile,
         link_args: [
                 '-Wl,--no-undefined',
                 '-Wl,--version-script=@0@'.format(libcini_symfile),
         ],
+        link_depends: libcini_symfile,
+        soversion: 0,
 )
 
 libcini_dep = declare_dependency(
-        include_directories: include_directories('.'),
-        link_with: libcini_private,
         dependencies: libcini_deps,
+        include_directories: include_directories('.'),
+        link_with: libcini_both.get_static_lib(),
         version: meson.project_version(),
 )
 
@@ -49,11 +42,11 @@ if not meson.is_subproject()
         install_headers('c-ini.h')
 
         mod_pkgconfig.generate(
-                libraries: libcini_shared,
-                version: meson.project_version(),
-                name: 'libcini',
-                filebase: 'libcini',
                 description: project_description,
+                filebase: 'libcini-'+major,
+                libraries: libcini_both.get_shared_lib(),
+                name: 'libcini',
+                version: meson.project_version(),
         )
 endif
 
@@ -61,7 +54,7 @@ endif
 # target: test-*
 #
 
-test_api = executable('test-api', ['test-api.c'], link_with: libcini_shared)
+test_api = executable('test-api', ['test-api.c'], link_with: libcini_both.get_shared_lib())
 test('API Symbol Visibility', test_api)
 
 test_basic = executable('test-basic', ['test-basic.c'], dependencies: libcini_dep)
