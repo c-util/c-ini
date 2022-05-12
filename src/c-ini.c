@@ -36,13 +36,13 @@ int c_ini_entry_new(CIniEntry **entryp,
         if (!dup_key)
                 return -ENOMEM;
 
-        memcpy(dup_key, key, n_key);
+        c_memcpy(dup_key, key, n_key);
 
         dup_value = calloc(1, n_value + 1);
         if (!dup_value)
                 return -ENOMEM;
 
-        memcpy(dup_value, value, n_value);
+        c_memcpy(dup_value, value, n_value);
 
         entry = calloc(1, sizeof(*entry));
         if (!entry)
@@ -166,7 +166,7 @@ int c_ini_group_new(CIniGroup **groupp, const uint8_t *label, size_t n_label) {
         if (!dup)
                 return -ENOMEM;
 
-        memcpy(dup, label, n_label);
+        c_memcpy(dup, label, n_label);
 
         group = calloc(1, sizeof(*group));
         if (!group)
@@ -314,7 +314,7 @@ int c_ini_raw_new(CIniRaw **rawp, const uint8_t *data, size_t n_data) {
 
         *raw = (CIniRaw)C_INI_RAW_NULL(*raw);
         raw->n_data = n_data;
-        memcpy(raw->data, data, n_data);
+        c_memcpy(raw->data, data, n_data);
 
         *rawp = raw;
         raw = NULL;

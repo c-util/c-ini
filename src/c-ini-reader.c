@@ -327,7 +327,7 @@ static int c_ini_reader_append(CIniReader *reader, const uint8_t *data, size_t n
                 reader->z_line = n;
         }
 
-        memcpy(reader->line + reader->n_line, data, n_data);
+        c_memcpy(reader->line + reader->n_line, data, n_data);
         reader->n_line += n_data;
         return 0;
 }
