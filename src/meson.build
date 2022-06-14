@@ -24,7 +24,6 @@ libcini_both = both_libraries(
         dependencies: libcini_deps,
         install: not meson.is_subproject(),
         link_args: [
-                '-Wl,--no-undefined',
                 '-Wl,--version-script=@0@'.format(libcini_symfile),
         ],
         link_depends: libcini_symfile,
