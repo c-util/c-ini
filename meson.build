@@ -15,7 +15,7 @@ mod_pkgconfig = import('pkgconfig')
 
 dep_clist = dependency('libclist-3')
 dep_crbtree = dependency('libcrbtree-3')
-dep_cstdaux = dependency('libcstdaux-1')
+dep_cstdaux = dependency('libcstdaux-1', version: '>=1.5.0')
 dep_cutf8 = dependency('libcutf8-1')
 add_project_arguments(dep_cstdaux.get_variable('cflags').split(' '), language: 'c')
 
